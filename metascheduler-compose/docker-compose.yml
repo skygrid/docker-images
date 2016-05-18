@@ -1,0 +1,26 @@
+web:
+  image: skygrid/metascheduler:latest
+  command: /opt/metascheduler/bin/metascheduler
+  ports:
+    - "8000:8000"
+  links:
+    - mongo
+  environment:
+    METASCHEDULER_CONFIG: /opt/metascheduler/configs/metascheduler.cfg
+mongodata:
+  image: mongo:3.2.6
+  volumes:
+    - /data/db
+  command: --break-mongo
+mongo:
+  image: mongo:3.2.6
+  volumes_from:
+    - mongodata
+  ports:
+    - "27017:27017"
+  command: --smallfiles --rest --storageEngine wiredTiger
+
+#   links:
+#     - db
+# db:
+#   image: mongo:3.2.6
