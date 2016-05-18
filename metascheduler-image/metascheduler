@@ -1,0 +1,10 @@
+#!/bin/bash
+
+RUN_DIR=/var/run/metascheduler
+
+if [ ! -d "$RUN_DIR" ]
+then
+    mkdir -p "$RUN_DIR"
+fi
+
+exec /opt/metascheduler/venv/bin/gunicorn -c /opt/metascheduler/configs/gunicorn.cfg metascheduler.main:app
