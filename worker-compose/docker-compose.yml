@@ -1,0 +1,14 @@
+web:
+  image: skygrid/docker-worker:0.4.15
+  command: /opt/docker-worker/bin/docker-worker
+  ports:
+    - "8000:8000"
+  volumes:
+    - /opt/docker-worker/var
+    - /var/run/docker.sock:/var/run/docker.sock
+  environment:
+    DOCKER_WORKER_CONFIG: /opt/docker-worker/configs/worker.cfg
+    METASCHEDULER_URL: http://metascheduler
+    METASCHEDULER_QUEUE: docker_queue
+    WORKER_SLEEP_TIME_IN_SECONDS: 60
+    WORKER_CONTAINER_CHECK_INERVAL_IN_SECONDS: 10
