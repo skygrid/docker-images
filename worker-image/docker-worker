@@ -1,0 +1,18 @@
+#!/bin/bash
+
+
+WORK_DIR=/opt/docker-worker/var/cache
+RUN_DIR=/opt/docker-worker/var/run
+
+if [ ! -d "$RUN_DIR" ]
+then
+    mkdir -p "$RUN_DIR"
+fi
+
+if [ ! -d "$WORK_DIR" ]
+then
+    mkdir -p "$WORK_DIR"
+fi
+
+
+exec /opt/docker-worker/venv/bin/python -m dockerworker.main
