@@ -1,14 +1,33 @@
-FROM ubuntu:14.04
+FROM centos:7
 
-RUN echo "nameserver 2a02:6b8:0:3400::1023" > /etc/resolv.conf
-RUN apt-get update
-RUN apt-get -y install  python-virtualenv python-dev build-essential python-all-dev git
+# Install xrootd
+RUN rpm -Uvh http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
-RUN mkdir /opt/docker-worker
-RUN virtualenv /opt/docker-worker/venv
-RUN /opt/docker-worker/venv/bin/pip install git+https://github.com/skygrid/libscheduler
-RUN /opt/docker-worker/venv/bin/pip install git+https://github.com/sashabaranov/easywebdav
-RUN /opt/docker-worker/venv/bin/pip install git+https://github.com/skygrid/docker-worker
+RUN yum install -y gcc python-devel xrootd xrootd-client xrootd-client-devel xrootd-python git xrootd-server 
 
-ADD configs /opt/docker-worker/configs
-ADD docker-worker /opt/docker-worker/bin/docker-worker
+RUN yum install -y python-pip
+
+RUN adduser --uid 1001 xrootduser
+
+RUN pip install git+https://github.com/andreiSaw/pydisneyland
+RUN pip install git+https://github.com/sashabaranov/easywebdav
+RUN pip install git+https://github.com/skygrid/hep-data-backends
+RUN git clone https://github.com/andreiSaw/docker-worker /src/docker-worker/source/
+RUN pip install git+https://github.com/andreiSaw/docker-worker
+RUN pip install parse
+ADD docker-worker /src/docker-worker/bin/docker-worker
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Copy the current directory contents into the container at
+ADD .disney /src/docker-worker/.disney
+
+# Define environment variables
+ENV DOCKER_WORKER_CONFIG /src/docker-worker/.disney/worker.cfg
+ENV DISNEYLAND_CLIENT_CONFIG /src/docker-worker/.disney/config.yml
+
+# print xrootd version
+RUN xrootd -v
+# Run run.py when the container launches
+CMD python /src/docker-worker/source/run.py
