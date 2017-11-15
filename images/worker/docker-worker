@@ -15,4 +15,4 @@ then
 fi
 
 
-exec /opt/docker-worker/venv/bin/python -m dockerworker.main
+exec python -m dockerworker.main
