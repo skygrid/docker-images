@@ -15,4 +15,7 @@ RUN pip install git+https://github.com/skygrid/hep-data-backends
 RUN pip install git+https://github.com/andreiSaw/docker-worker
 
 ADD docker-worker /opt/docker-worker/bin/docker-worker
-CMD python -m dockerworker.main
+ADD configs /opt/docker-worker/configs
+ADD .disney /root/.disney
+ENV DOCKER_WORKER_CONFIG=/opt/docker-worker/configs/worker.cfg
+CMD bin/bash ./opt/docker-worker/bin/docker-worker
