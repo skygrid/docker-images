@@ -1,0 +1,5 @@
+client_cert: /root/.disney/test-user.crt
+client_key: /root/.disney/test-user.key
+ca_cert: /root/.disney/disneyland.crt
+connect_to: docker.for.mac.localhost:50051
+db_uri: postgres://docker.for.mac.localhost/disneyland?sslmode=disable

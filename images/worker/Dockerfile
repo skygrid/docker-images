@@ -1,14 +1,24 @@
-FROM ubuntu:14.04
+FROM centos:7
 
-RUN echo "nameserver 2a02:6b8:0:3400::1023" > /etc/resolv.conf
-RUN apt-get update
-RUN apt-get -y install  python-virtualenv python-dev build-essential python-all-dev git
+# Install xrootd
+RUN yum -y --nogpg update
+# Add required repositories
+ADD *.repo /etc/yum.repos.d/
+
+RUN yum install -y gcc python-devel xrootd xrootd-client xrootd-client-devel xrootd-python git
+RUN yum install -y python-pip
+
+# print xrootd version
+RUN xrootd -v
 
 RUN mkdir /opt/docker-worker
-RUN virtualenv /opt/docker-worker/venv
-RUN /opt/docker-worker/venv/bin/pip install git+https://github.com/skygrid/libscheduler
-RUN /opt/docker-worker/venv/bin/pip install git+https://github.com/sashabaranov/easywebdav
-RUN /opt/docker-worker/venv/bin/pip install git+https://github.com/skygrid/docker-worker
+RUN pip install git+https://github.com/andreiSaw/pydisneyland
+RUN pip install git+https://github.com/sashabaranov/easywebdav
+RUN pip install git+https://github.com/skygrid/hep-data-backends
+RUN pip install git+https://github.com/andreiSaw/docker-worker
 
-ADD configs /opt/docker-worker/configs
 ADD docker-worker /opt/docker-worker/bin/docker-worker
+ADD configs /opt/docker-worker/configs
+ADD .disney /root/.disney
+ENV DOCKER_WORKER_CONFIG=/opt/docker-worker/configs/worker.cfg
+CMD bin/bash ./opt/docker-worker/bin/docker-worker
